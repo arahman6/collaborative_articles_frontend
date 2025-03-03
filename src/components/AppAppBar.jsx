@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { alpha, styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom'; 
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -31,6 +32,8 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   }));
   
   export default function AppAppBar() {
+    const navigate = useNavigate(); 
+
     const [open, setOpen] = React.useState(false);
   
     const toggleDrawer = (newOpen) => () => {
@@ -51,7 +54,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
         <Container maxWidth="lg">
           <StyledToolbar variant="dense" disableGutters>
             <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
+            <IconButton onClick={() => navigate('/')} >
               <Mining4InsightsIcon />
+            </IconButton>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <Button variant="text" color="info" size="small">Features</Button>
                 <Button variant="text" color="info" size="small">Testimonials</Button>
@@ -62,8 +67,8 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
               </Box>
             </Box>
             <Box sx={{display: { xs: 'none', md: 'flex' }, gap: 1, alignItems: 'center',}}>
-              <Button color="primary" variant="text" size="small">Sign in</Button>
-              <Button color="primary" variant="contained" size="small">Sign up</Button>
+              <Button color="primary" variant="text" size="small" onClick={() => {navigate('/signin')}}>Sign in</Button>
+              <Button color="primary" variant="contained" size="small" onClick={() => {navigate('/signup')}}>Sign up</Button>
               <ColorModeIconDropdown />
             </Box>
             <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
@@ -86,10 +91,10 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
                   <MenuItem>Blog</MenuItem>
                   <Divider sx={{ my: 3 }} />
                   <MenuItem>
-                    <Button color="primary" variant="contained" fullWidth>Sign up</Button>
+                    <Button color="primary" variant="contained" fullWidth onClick={() => {navigate('/signup');}}>Sign up</Button>
                   </MenuItem>
                   <MenuItem>
-                    <Button color="primary" variant="outlined" fullWidth>Sign in</Button>
+                    <Button color="primary" variant="outlined" fullWidth onClick={() => {navigate('/signin');}}>Sign in</Button>
                   </MenuItem>
                 </Box>
               </Drawer>
