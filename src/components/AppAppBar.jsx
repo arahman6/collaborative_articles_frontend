@@ -14,6 +14,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
 import Mining4InsightsIcon from './Mining4InsightsIcon';
+import { useEffect, useState } from 'react';
+
+
+const isLoggedIn = () => !!localStorage.getItem("access_token");
+
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     display: 'flex',
@@ -33,8 +38,18 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   
   export default function AppAppBar() {
     const navigate = useNavigate(); 
-
+    const [loggedIn, setLoggedIn] = useState(isLoggedIn());
     const [open, setOpen] = React.useState(false);
+
+    useEffect(() => {
+        setLoggedIn(isLoggedIn());
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("access_token");
+        setLoggedIn(false); 
+        navigate("/signin");
+    };
   
     const toggleDrawer = (newOpen) => () => {
       setOpen(newOpen);
@@ -69,6 +84,13 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
             <Box sx={{display: { xs: 'none', md: 'flex' }, gap: 1, alignItems: 'center',}}>
               <Button color="primary" variant="text" size="small" onClick={() => {navigate('/signin')}}>Sign in</Button>
               <Button color="primary" variant="contained" size="small" onClick={() => {navigate('/signup')}}>Sign up</Button>
+
+              {!loggedIn ? (
+                    <>
+                        <Button color="primary" variant="text" size="small" onClick={() => {navigate('/signin')}}>Sign in</Button>
+                        <Button color="primary" variant="contained" size="small" onClick={() => {navigate('/signup')}}>Sign up</Button>
+                    </>
+                ) : (<Button color="primary" variant="contained" size="small" onClick={handleLogout}>Logout</Button>)}
               <ColorModeIconDropdown />
             </Box>
             <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
