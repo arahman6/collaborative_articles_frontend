@@ -1,4 +1,6 @@
 import * as React from 'react';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -18,6 +20,8 @@ import ForgotPassword from '../components/ForgotPassword';
 // import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import { GoogleIcon, FacebookIcon } from '../components/CustomIcons';
 import Mining4InsightsIcon from '../components/Mining4InsightsIcon';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -62,6 +66,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props) {
+    const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -76,17 +81,60 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+//   const handleSubmit = (event) => {
+//     if (emailError || passwordError) {
+//       event.preventDefault();
+//       return;
+//     }
+//     const data = new FormData(event.currentTarget);
+//     console.log({
+//       email: data.get('email'),
+//       password: data.get('password'),
+//     });
+//   };
+
+
+
+  // State for form fields
+  const [loginData, setLoginData] = React.useState({
+    email: "",
+    password: "",
+  });
+
+  const [error, setError] = React.useState(""); 
+
+  const handleChange = (e) => {
+    setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");  
+  
+    const formData = new URLSearchParams();
+    formData.append("username", loginData.email); 
+    formData.append("password", loginData.password);
+  
+    try {
+      const response = await axios.post(`${API_URL}/login/`, formData, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+  
+      console.log("Login successful:", response.data);
+
+      localStorage.setItem("token", response.data.access_token);
+  
+      alert("Login successful! Redirecting...");
+      navigate("/");
+
+    } catch (err) {
+      console.error("Login failed:", err.response?.data?.detail || err.message);
+      setError(err.response?.data?.detail || "Invalid credentials.");
+    }
+  };
+
 
   const validateInputs = () => {
     const email = document.getElementById('email');
@@ -130,6 +178,7 @@ export default function SignIn(props) {
           >
             Sign in
           </Typography>
+          {error && <Typography color="error">{error}</Typography>}
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -156,6 +205,8 @@ export default function SignIn(props) {
                 fullWidth
                 variant="outlined"
                 color={emailError ? 'error' : 'primary'}
+                onChange={handleChange}
+                value={loginData.email}
               />
             </FormControl>
             <FormControl>
@@ -173,6 +224,8 @@ export default function SignIn(props) {
                 fullWidth
                 variant="outlined"
                 color={passwordError ? 'error' : 'primary'}
+                onChange={handleChange}
+                value={loginData    .password}
               />
             </FormControl>
             <FormControlLabel
