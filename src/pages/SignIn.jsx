@@ -81,18 +81,6 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-//   const handleSubmit = (event) => {
-//     if (emailError || passwordError) {
-//       event.preventDefault();
-//       return;
-//     }
-//     const data = new FormData(event.currentTarget);
-//     console.log({
-//       email: data.get('email'),
-//       password: data.get('password'),
-//     });
-//   };
-
 
 
   // State for form fields
@@ -124,7 +112,7 @@ export default function SignIn(props) {
   
       console.log("Login successful:", response.data);
 
-      localStorage.setItem("token", response.data.access_token);
+      localStorage.setItem("access_token", response.data.access_token);
   
       alert("Login successful! Redirecting...");
       navigate("/");

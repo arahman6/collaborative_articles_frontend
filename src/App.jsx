@@ -1,6 +1,6 @@
 import React from "react";
 import './App.css'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route , Navigate} from "react-router-dom";
 import Container from "@mui/material/Container";
 import AppAppBar from "./components/AppAppBar";
 import Footer from "./components/Footer";
@@ -12,6 +12,10 @@ import SignUp from './pages/Signup';
 import SignIn from "./pages/SignIn";
 
 function App() {
+    const PrivateRoute = ({ children }) => {
+        return localStorage.getItem("access_token") ? children : <Navigate to="/signin" />;
+    };
+
   return (
     <Router>
       <AppAppBar />
@@ -21,6 +25,8 @@ function App() {
           <Route path="/article/:id" element={<DetailContent />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
+          {/* <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} /> */}
+
         </Routes>
       </Container>
       <Footer />
