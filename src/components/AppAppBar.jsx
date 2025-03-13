@@ -33,7 +33,6 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 export default function AppAppBar() {
   const navigate = useNavigate();
-  const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('access_token'));
   const [open, setOpen] = React.useState(false);
   const { isAuthenticated, logout } = useAuth();
 
@@ -41,12 +40,6 @@ export default function AppAppBar() {
     logout();
     navigate('/signin');
   };
-
-  useEffect(() => {
-    if (localStorage.getItem('access_token')) {
-      setLoggedIn(true);
-    }
-  }, []);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -128,7 +121,6 @@ export default function AppAppBar() {
               alignItems: 'center',
             }}
           >
-
             {!isAuthenticated ? (
               <>
                 <Button color="primary" variant="text" size="small" onClick={() => navigate('/signin')}>
@@ -196,7 +188,7 @@ export default function AppAppBar() {
                   }}
                 />
 
-                {!isAuthenticated ? ( 
+                {!isAuthenticated ? (
                   <>
                     <MenuItem>
                       <Button

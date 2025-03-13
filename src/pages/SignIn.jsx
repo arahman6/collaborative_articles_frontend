@@ -20,6 +20,8 @@ import ForgotPassword from '../components/ForgotPassword';
 // import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import { GoogleIcon, FacebookIcon } from '../components/CustomIcons';
 import Mining4InsightsIcon from '../components/Mining4InsightsIcon';
+import { useAuth } from '../contexts/AuthContext';
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -66,7 +68,8 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props) {
-    const navigate = useNavigate();
+    const { login } = useAuth();
+  const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -112,7 +115,8 @@ export default function SignIn(props) {
   
       console.log("Login successful:", response.data);
 
-      localStorage.setItem("access_token", response.data.access_token);
+    //   localStorage.setItem("access_token", response.data.access_token);
+      login(response.data.access_token);
   
     //   alert("Login successful! Redirecting...");
       navigate("/");

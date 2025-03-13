@@ -6,10 +6,9 @@ import AppAppBar from "./components/AppAppBar";
 import Footer from "./components/Footer";
 import MainContent from "./components/MainContent";
 import DetailContent from "./components/DetailContent"; // Create/Import your detail page
-import cardData from "./api/articles"; // Array of articles
-// import {articlesData} from "./api/articles"; // Array of articles
-import SignUp from './pages/Signup';
+import SignUp from "./pages/Signup";
 import SignIn from "./pages/SignIn";
+import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
     const PrivateRoute = ({ children }) => {
@@ -17,6 +16,7 @@ function App() {
     };
 
   return (
+    <AuthProvider>
     <Router>
       <AppAppBar />
       <Container maxWidth="lg" component="main" sx={{ display: "flex", flexDirection: "column", my: 16, gap: 4 }} >
@@ -31,6 +31,7 @@ function App() {
       </Container>
       <Footer />
     </Router>
+    </AuthProvider>
   );
 }
 
