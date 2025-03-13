@@ -145,7 +145,7 @@ export default function SignUp(props) {
     setError("");  // Reset error state
 
     try {
-      const response = await axios.post(`${API_URL}/signup/`, formData);
+      const response = await axios.post(`${API_URL}/users/signup/`, formData);
       console.log("Signup successful:", response.data);
       alert("Signup successful! Redirecting to login...");
       navigate("/signin");  // 👈 Redirect after signup

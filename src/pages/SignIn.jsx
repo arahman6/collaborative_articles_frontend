@@ -104,7 +104,7 @@ export default function SignIn(props) {
     formData.append("password", loginData.password);
   
     try {
-      const response = await axios.post(`${API_URL}/login/`, formData, {
+      const response = await axios.post(`${API_URL}/users/login/`, formData, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
@@ -114,7 +114,7 @@ export default function SignIn(props) {
 
       localStorage.setItem("access_token", response.data.access_token);
   
-      alert("Login successful! Redirecting...");
+    //   alert("Login successful! Redirecting...");
       navigate("/");
 
     } catch (err) {
