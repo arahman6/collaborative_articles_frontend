@@ -9,9 +9,10 @@ import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
+import ReactMarkdown from "react-markdown";
 import cardData from "../api/articles";
 
-// Example: If you want to reuse the same style as MainContent:
+// Styled components for Material UI
 const DetailCard = styled(Card)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -28,16 +29,42 @@ const DetailCardContent = styled(CardContent)({
   padding: 16,
 });
 
+// Markdown styling for better readability
+const markdownStyle = {  
+    textAlign: "justify",
+    lineHeight: 1.8, 
+    wordBreak: "break-word",
+  "& h1": { fontSize: "1.8rem", fontWeight: "bold", marginBottom: "10px" },
+  "& h2": { fontSize: "1.6rem", fontWeight: "bold", marginBottom: "8px" },
+  "& h3": { fontSize: "1.4rem", fontWeight: "bold", marginBottom: "6px" },
+  "& p": { fontSize: "1rem", marginBottom: "8px", lineHeight: "1.6" },
+  "& ul": { paddingLeft: "20px" },
+  "& li": { marginBottom: "4px" },
+  "& strong": { fontWeight: "bold" },
+  "& em": { fontStyle: "italic" },
+  "& blockquote": {
+    borderLeft: "4px solid #ccc",
+    paddingLeft: "10px",
+    fontStyle: "italic",
+    margin: "10px 0",
+  },
+  "& code": {
+    fontFamily: "monospace",
+    backgroundColor: "#f4f4f4",
+    padding: "2px 6px",
+    borderRadius: "4px",
+  },
+};
+
 export default function DetailContent({ articlesData }) {
-  // Capture the :id route param from react-router
   const { id } = useParams();
-//   console.log('articlesData', articlesData);
   const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(true);  
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     async function fetchArticle() {
       try {
-        const articles = await cardData(); // Fetch articles from API
+        const articles = await cardData(); 
         const foundArticle = articles.find((article) => article.id === id);
         setArticle(foundArticle);
       } catch (error) {
@@ -46,7 +73,6 @@ export default function DetailContent({ articlesData }) {
         setLoading(false);
       }
     }
-
     fetchArticle();
   }, [id]);
 
@@ -57,9 +83,6 @@ export default function DetailContent({ articlesData }) {
       </Box>
     );
   }
-
-
-
 
   if (!article) {
     return (
@@ -82,17 +105,15 @@ export default function DetailContent({ articlesData }) {
           <Typography variant="caption" color="text.secondary" gutterBottom>
             {article.tags.join(", ")}
           </Typography>
-          <Typography variant="h4" gutterBottom>
-            {article.title}
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            {article.description}
-          </Typography>
 
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" color="text.secondary">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </Typography>
+          {/* Render Title as Markdown */}
+          <Box sx={markdownStyle}>
+            <ReactMarkdown>{article.title}</ReactMarkdown>
+          </Box>
+
+          {/* Render Content as Markdown */}
+          <Box sx={markdownStyle }>
+            <ReactMarkdown>{article.description}</ReactMarkdown>
           </Box>
 
           <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", mt: 3 }}>
