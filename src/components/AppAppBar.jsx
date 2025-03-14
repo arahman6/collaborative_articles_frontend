@@ -2,6 +2,8 @@ import * as React from 'react';
 import { alpha, styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
@@ -34,7 +36,19 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 export default function AppAppBar() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+//   console.log('user', user);
+//   console.log('isAuthenticated', isAuthenticated);
+
+const userMenuOpen = Boolean(anchorEl);
+const handleAvatarClick = (event) => {
+  setAnchorEl(event.currentTarget);
+};
+const handleUserMenuClose = () => {
+  setAnchorEl(null);
+};
+
 
   const handleLogout = () => {
     logout();
@@ -131,9 +145,15 @@ export default function AppAppBar() {
                 </Button>
               </>
             ) : (
-              <Button color="primary" variant="contained" size="small" onClick={handleLogout}>
-                Logout
-              </Button>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Avatar src={user?.profile_picture} sx={{ width: 32, height: 32 }} alt={user?.username}>
+                  {user?.username?.[0]}
+                </Avatar>
+                <Typography variant="body1">{user?.username || user?.email}</Typography>
+                <Button variant="contained" size="small" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </Box>
             )}
             <ColorModeIconDropdown />
           </Box>
@@ -216,7 +236,11 @@ export default function AppAppBar() {
                     </MenuItem>
                   </>
                 ) : (
-                  <MenuItem>
+                  <MenuItem sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <Avatar src={user?.profile_picture} alt={user?.username} sx={{ width: 36, height: 36 }} />
+                    <Typography variant="body1" flexGrow={1}>
+                      {user?.username || user?.email}
+                    </Typography>
                     <Button color="primary" variant="contained" size="small" onClick={handleLogout}>
                       Logout
                     </Button>

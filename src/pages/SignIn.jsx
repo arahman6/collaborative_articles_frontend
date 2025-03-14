@@ -1,6 +1,6 @@
 import * as React from 'react';
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -22,7 +22,6 @@ import { GoogleIcon, FacebookIcon } from '../components/CustomIcons';
 import Mining4InsightsIcon from '../components/Mining4InsightsIcon';
 import { useAuth } from '../contexts/AuthContext';
 
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -36,11 +35,9 @@ const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     maxWidth: '450px',
   },
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+  boxShadow: 'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
   ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
+    boxShadow: 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
   }),
 }));
 
@@ -57,18 +54,16 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     position: 'absolute',
     zIndex: -1,
     inset: 0,
-    backgroundImage:
-      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
+    backgroundImage: 'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
     backgroundRepeat: 'no-repeat',
     ...theme.applyStyles('dark', {
-      backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+      backgroundImage: 'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
     }),
   },
 }));
 
 export default function SignIn(props) {
-    const { login } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
@@ -84,15 +79,13 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-
-
   // State for form fields
   const [loginData, setLoginData] = React.useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
-  const [error, setError] = React.useState(""); 
+  const [error, setError] = React.useState('');
 
   const handleChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
@@ -100,33 +93,39 @@ export default function SignIn(props) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError("");  
-  
+    setError('');
+
     const formData = new URLSearchParams();
-    formData.append("username", loginData.email); 
-    formData.append("password", loginData.password);
-  
+    formData.append('username', loginData.email);
+    formData.append('password', loginData.password);
+
     try {
       const response = await axios.post(`${API_URL}/users/login/`, formData, {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-  
-      console.log("Login successful:", response.data);
 
-    //   localStorage.setItem("access_token", response.data.access_token);
-      login(response.data.access_token);
-  
-    //   alert("Login successful! Redirecting...");
-      navigate("/");
+      console.log('Login successful:', response.data);
 
+      const userResponse = await axios.get(`${API_URL}/users/profile/`, {
+        headers: { Authorization: `Bearer ${response.data.access_token}` },
+      });
+      console.log('User:', userResponse.data);
+      if (userResponse.status === 200) {
+        localStorage.setItem('user', JSON.stringify(userResponse.data));
+      }
+
+      //   localStorage.setItem("access_token", response.data.access_token);
+      login(response.data.access_token, userResponse.data);
+
+      //   alert("Login successful! Redirecting...");
+      navigate('/');
     } catch (err) {
-      console.error("Login failed:", err.response?.data?.detail || err.message);
-      setError(err.response?.data?.detail || "Invalid credentials.");
+      console.error('Login failed:', err.response?.data?.detail || err.message);
+      setError(err.response?.data?.detail || 'Invalid credentials.');
     }
   };
-
 
   const validateInputs = () => {
     const email = document.getElementById('email');
@@ -157,17 +156,13 @@ export default function SignIn(props) {
 
   return (
     <div>
-    {/* <AppTheme {...props}> */}
+      {/* <AppTheme {...props}> */}
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         {/* <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} /> */}
         <Card variant="outlined">
           <Mining4InsightsIcon />
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-          >
+          <Typography component="h1" variant="h4" sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}>
             Sign in
           </Typography>
           {error && <Typography color="error">{error}</Typography>}
@@ -184,97 +179,39 @@ export default function SignIn(props) {
           >
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-                onChange={handleChange}
-                value={loginData.email}
-              />
+              <TextField error={emailError} helperText={emailErrorMessage} id="email" type="email" name="email" placeholder="your@email.com" autoComplete="email" autoFocus required fullWidth variant="outlined" color={emailError ? 'error' : 'primary'} onChange={handleChange} value={loginData.email} />
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={passwordError ? 'error' : 'primary'}
-                onChange={handleChange}
-                value={loginData    .password}
-              />
+              <TextField error={passwordError} helperText={passwordErrorMessage} name="password" placeholder="••••••" type="password" id="password" autoComplete="current-password" autoFocus required fullWidth variant="outlined" color={passwordError ? 'error' : 'primary'} onChange={handleChange} value={loginData.password} />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
             <ForgotPassword open={open} handleClose={handleClose} />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Button type="submit" fullWidth variant="contained" onClick={validateInputs}>
               Sign in
             </Button>
-            <Link
-              component="button"
-              type="button"
-              onClick={handleClickOpen}
-              variant="body2"
-              sx={{ alignSelf: 'center' }}
-            >
+            <Link component="button" type="button" onClick={handleClickOpen} variant="body2" sx={{ alignSelf: 'center' }}>
               Forgot your password?
             </Link>
           </Box>
           <Divider>or</Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Google')}
-              startIcon={<GoogleIcon />}
-            >
+            <Button fullWidth variant="outlined" onClick={() => alert('Sign in with Google')} startIcon={<GoogleIcon />}>
               Sign in with Google
             </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Facebook')}
-              startIcon={<FacebookIcon />}
-            >
+            <Button fullWidth variant="outlined" onClick={() => alert('Sign in with Facebook')} startIcon={<FacebookIcon />}>
               Sign in with Facebook
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
               Don&apos;t have an account?{' '}
-              <Link
-                href="/material-ui/getting-started/templates/sign-in/"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
+              <Link href="/material-ui/getting-started/templates/sign-in/" variant="body2" sx={{ alignSelf: 'center' }}>
                 Sign up
               </Link>
             </Typography>
           </Box>
         </Card>
       </SignInContainer>
-    {/* </AppTheme> */}
+      {/* </AppTheme> */}
     </div>
   );
 }
