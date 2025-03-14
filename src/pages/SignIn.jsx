@@ -106,12 +106,12 @@ export default function SignIn(props) {
         },
       });
 
-      console.log('Login successful:', response.data);
+    //   console.log('Login successful:', response.data);
 
       const userResponse = await axios.get(`${API_URL}/users/profile/`, {
         headers: { Authorization: `Bearer ${response.data.access_token}` },
       });
-      console.log('User:', userResponse.data);
+    //   console.log('User:', userResponse.data);
       if (userResponse.status === 200) {
         localStorage.setItem('user', JSON.stringify(userResponse.data));
       }

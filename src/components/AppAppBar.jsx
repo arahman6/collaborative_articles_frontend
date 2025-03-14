@@ -14,10 +14,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
+// import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
 import Mining4InsightsIcon from './Mining4InsightsIcon';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import Menu from '@mui/material/Menu';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -38,20 +39,21 @@ export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState(null);
-//   console.log('user', user);
-//   console.log('isAuthenticated', isAuthenticated);
+  //   console.log('user', user);
+  //   console.log('isAuthenticated', isAuthenticated);
 
-const userMenuOpen = Boolean(anchorEl);
-const handleAvatarClick = (event) => {
-  setAnchorEl(event.currentTarget);
-};
-const handleUserMenuClose = () => {
-  setAnchorEl(null);
-};
+  const userMenuOpen = Boolean(anchorEl);
 
+  const handleAvatarClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleUserMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleLogout = () => {
     logout();
+    setAnchorEl(null);
     navigate('/signin');
   };
 
@@ -145,17 +147,41 @@ const handleUserMenuClose = () => {
                 </Button>
               </>
             ) : (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Avatar src={user?.profile_picture} sx={{ width: 32, height: 32 }} alt={user?.username}>
-                  {user?.username?.[0]}
-                </Avatar>
-                <Typography variant="body1">{user?.username || user?.email}</Typography>
-                <Button variant="contained" size="small" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </Box>
+              <>
+                <IconButton
+                  onClick={handleAvatarClick}
+                  sx={{
+                    p: 0,
+                    width: 40,
+                    height: 40,
+                    display: 'flex',
+                  }}
+                >
+                  <Avatar src={user?.profile_picture} alt={user?.username} sx={{ width: 36, height: 36 }} />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleUserMenuClose}
+                  sx={{
+                    mt: 1.5,
+                    '& .MuiPaper-root': {
+                      minWidth: 200,
+                      boxShadow: 3,
+                    },
+                  }}
+                >
+                  <MenuItem disabled>
+                    <Typography variant="subtitle2">{user?.username || user?.email}</Typography>
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleLogout}>
+                    <Typography variant="body2">Logout</Typography>
+                  </MenuItem>
+                </Menu>
+              </>
             )}
-            <ColorModeIconDropdown />
+            {/* <ColorModeIconDropdown /> */}
           </Box>
           <Box
             sx={{
@@ -166,7 +192,7 @@ const handleUserMenuClose = () => {
               gap: 1,
             }}
           >
-            <ColorModeIconDropdown size="medium" />
+            {/* <ColorModeIconDropdown size="medium" /> */}
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
               <MenuIcon />
             </IconButton>
