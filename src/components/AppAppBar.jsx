@@ -2,6 +2,8 @@ import * as React from 'react';
 import { alpha, styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
@@ -12,10 +14,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
+// import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
 import Mining4InsightsIcon from './Mining4InsightsIcon';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import Menu from '@mui/material/Menu';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -34,10 +37,23 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 export default function AppAppBar() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  //   console.log('user', user);
+  //   console.log('isAuthenticated', isAuthenticated);
+
+  const userMenuOpen = Boolean(anchorEl);
+
+  const handleAvatarClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleUserMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleLogout = () => {
     logout();
+    setAnchorEl(null);
     navigate('/signin');
   };
 
@@ -131,11 +147,41 @@ export default function AppAppBar() {
                 </Button>
               </>
             ) : (
-              <Button color="primary" variant="contained" size="small" onClick={handleLogout}>
-                Logout
-              </Button>
+              <>
+                <IconButton
+                  onClick={handleAvatarClick}
+                  sx={{
+                    p: 0,
+                    width: 40,
+                    height: 40,
+                    display: 'flex',
+                  }}
+                >
+                  <Avatar src={user?.profile_picture} alt={user?.username} sx={{ width: 36, height: 36 }} />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleUserMenuClose}
+                  sx={{
+                    mt: 1.5,
+                    '& .MuiPaper-root': {
+                      minWidth: 200,
+                      boxShadow: 3,
+                    },
+                  }}
+                >
+                  <MenuItem disabled>
+                    <Typography variant="subtitle2">{user?.username || user?.email}</Typography>
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleLogout}>
+                    <Typography variant="body2">Logout</Typography>
+                  </MenuItem>
+                </Menu>
+              </>
             )}
-            <ColorModeIconDropdown />
+            {/* <ColorModeIconDropdown /> */}
           </Box>
           <Box
             sx={{
@@ -146,7 +192,7 @@ export default function AppAppBar() {
               gap: 1,
             }}
           >
-            <ColorModeIconDropdown size="medium" />
+            {/* <ColorModeIconDropdown size="medium" /> */}
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
               <MenuIcon />
             </IconButton>
@@ -216,7 +262,11 @@ export default function AppAppBar() {
                     </MenuItem>
                   </>
                 ) : (
-                  <MenuItem>
+                  <MenuItem sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <Avatar src={user?.profile_picture} alt={user?.username} sx={{ width: 36, height: 36 }} />
+                    <Typography variant="body1" flexGrow={1}>
+                      {user?.username || user?.email}
+                    </Typography>
                     <Button color="primary" variant="contained" size="small" onClick={handleLogout}>
                       Logout
                     </Button>
